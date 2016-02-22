@@ -47,7 +47,11 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="To Do List" id="FQR-cM-RfI">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="VOQ-e1-guX"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="VOQ-e1-guX">
+                            <connections>
+                                <action selector="addButtonPressed:" destination="BYZ-38-t0r" id="Zmc-6D-1fX"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="esn-Nq-zfz" id="hLL-yY-2HL"/>

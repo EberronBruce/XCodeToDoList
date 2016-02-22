@@ -14,6 +14,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     //Connect the storyboard table view
     @IBOutlet weak var tableView: UITableView!
     
+    //Sets a text field for the alert
+    var tField : UITextField!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -39,6 +42,43 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         return cell
     }
 
+    //Function for when the add button is pressed
+    @IBAction func addButtonPressed(sender: AnyObject) {
+        alertPopup()
+    }
+    
+    func configurationTextField(textField: UITextField){
+        textField.placeholder = "Enter new item"
+        self.tField = textField
+    }
+    
+    //Saves the item to memory
+    func saveNewItem(){
+        print("Item Save")
+    }
+    
+    //This handles the popup
+    func alertPopup() {
+        
+        //Creates constants for the alert
+        let alert = UIAlertController(title: "Add New Item", message: nil, preferredStyle: .Alert)
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel) {
+            UIAlertAction in alert.dismissViewControllerAnimated(true, completion: nil)
+        }
+        
+        let saveAction = UIAlertAction(title: "Save", style: UIAlertActionStyle.Default) {
+            UIAlertAction in self.saveNewItem()
+        }
+        
+        //Adds items to alert view
+        alert.addTextFieldWithConfigurationHandler(configurationTextField)
+        alert.addAction(cancelAction)
+        alert.addAction(saveAction)
+        
+        //Shows the alert 
+        self.presentViewController(alert, animated: true, completion: nil)
+    }
 
 }
 
