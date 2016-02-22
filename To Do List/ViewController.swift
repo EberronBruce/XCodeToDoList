@@ -17,6 +17,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     //Sets a text field for the alert
     var tField : UITextField!
     
+    //set up an items array
+    var items : [Item] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -24,6 +27,26 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         //Set the data source and delegate to the view controller
         self.tableView.dataSource = self
         self.tableView.delegate = self
+        
+        //Setting the context as an AppDelegate to help manage coredata
+        let context = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
+        
+        let request = NSFetchRequest(entityName: "Item")
+        var results : [AnyObject]?
+        
+        do{
+            results = try context.executeFetchRequest(request)
+        } catch _ {
+            results = nil
+        }
+        
+        if results != nil {
+            self.items = results as! [Item]
+        }
+        
+        self.tableView.reloadData()
+
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -33,12 +56,13 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     //Set up the number of rows in the table view
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+        return self.items.count
     }
     //Set up the cells in the table view
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = UITableViewCell()
-        cell.textLabel!.text = "Do this thing"
+        let item = self.items[indexPath.row]
+        cell.textLabel!.text = item.title
         return cell
     }
 
@@ -55,6 +79,37 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     //Saves the item to memory
     func saveNewItem(){
         print("Item Save")
+        
+        //Setting the context as an AppDelegate to help manage coredata
+        let context = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
+        //Creating an Entity for the item using the context as mananagement
+        let item = NSEntityDescription.insertNewObjectForEntityForName("Item", inManagedObjectContext: context) as! Item
+        
+        item.title = tField.text
+        //Try to save or catch errors and do nothing
+        do {
+            try context.save()
+        } catch _ {
+            
+        }
+        
+        //Get the requests and reload data
+        let request = NSFetchRequest(entityName: "Item")
+        var results : [AnyObject]?
+        
+        do{
+            results = try context.executeFetchRequest(request)
+        } catch _ {
+            results = nil
+        }
+        
+        if results != nil {
+            self.items = results as! [Item]
+        }
+    
+        self.tableView.reloadData()
+        
+        
     }
     
     //This handles the popup
@@ -76,7 +131,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         alert.addAction(cancelAction)
         alert.addAction(saveAction)
         
-        //Shows the alert 
+        //Shows the alert
         self.presentViewController(alert, animated: true, completion: nil)
     }
 
